@@ -2,10 +2,9 @@ package com.narxoz.rpg.loot;
 
 import java.util.List;
 
-public interface LootTable {
-    List<String> getItems();
+public interface LootTable extends Cloneable {
+    List<String> getLootItems();
     int getGoldDrop();
     int getExperienceDrop();
-    String getLootInfo();
     LootTable clone();
 }
