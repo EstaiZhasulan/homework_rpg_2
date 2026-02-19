@@ -1,20 +1,31 @@
 package com.narxoz.rpg.loot;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FireLootTable extends AbstractLootTable {
+public class FireLootTable implements LootTable {
+    private final List<String> items;
+    private final int gold;
+    private final int exp;
+
     public FireLootTable() {
-        lootItems.add("Flaming Sword");
-        lootItems.add("Fire Amulet");
-        lootItems.add("Burning Armor");
-        goldDrop = 50;
-        experienceDrop = 100;
+        items = new ArrayList<>();
+        items.add("Fire Gem");
+        items.add("Dragon Scale");
+        items.add("Flame Rune");
+        gold = 500;
+        exp = 2000;
     }
-    @Override public LootTable clone() {
-        FireLootTable copy = new FireLootTable();
-        copy.lootItems = new ArrayList<>(lootItems);
-        copy.goldDrop = goldDrop;
-        copy.experienceDrop = experienceDrop;
-        return copy;
+
+    private FireLootTable(List<String> items, int gold, int exp) {
+        this.items = new ArrayList<>(items);
+        this.gold = gold;
+        this.exp = exp;
     }
+
+    @Override public List<String> getItems() { return new ArrayList<>(items); }
+    @Override public int getGoldDrop() { return gold; }
+    @Override public int getExperienceDrop() { return exp; }
+    @Override public String getLootInfo() { return "Items: " + items + " Gold: " + gold + " EXP: " + exp; }
+    @Override public LootTable clone() { return new FireLootTable(this.items, this.gold, this.exp); }
 }

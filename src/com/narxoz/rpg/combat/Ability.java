@@ -4,5 +4,6 @@ public interface Ability {
     String getName();
     int getDamage();
     String getDescription();
+    AbilityType getType();
     Ability clone();
 }
