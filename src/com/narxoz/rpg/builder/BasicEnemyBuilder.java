@@ -1,8 +1,8 @@
 package com.narxoz.rpg.builder;
 
 import com.narxoz.rpg.combat.Ability;
-import com.narxoz.rpg.enemy.Goblin;
 import com.narxoz.rpg.enemy.Enemy;
+import com.narxoz.rpg.enemy.Goblin;
 import com.narxoz.rpg.loot.LootTable;
 
 import java.util.ArrayList;
@@ -32,21 +32,24 @@ public class BasicEnemyBuilder implements EnemyBuilder {
         return this;
     }
     @Override public BasicEnemyBuilder setLootTable(LootTable loot){ this.lootTable = loot; return this; }
-    @Override public BasicEnemyBuilder setAI(String aiBehavior){  return this; }
+    @Override public BasicEnemyBuilder setAI(String aiBehavior){ /* not used for basic */ return this; }
 
     @Override
     public Enemy build() {
         if (name == null || name.isEmpty()) throw new IllegalStateException("Name required");
-        Goblin g = new Goblin(name);
-        g.health = this.health;
-        g.damage = this.damage;
-        g.defense = this.defense;
-        g.speed = this.speed;
-        g.element = this.element;
-        g.abilities = new java.util.ArrayList<>();
-        for (Ability a : this.abilities) g.abilities.add(a.clone());
-        g.lootTable = (this.lootTable == null) ? null : this.lootTable.clone();
-        g.isTemplate = true; // mark as template
+
+        LootTable clonedLoot = (this.lootTable == null) ? null : this.lootTable.clone();
+        Goblin g = new Goblin(
+                this.name,
+                this.health,
+                this.damage,
+                this.defense,
+                this.speed,
+                this.element,
+                this.abilities,
+                clonedLoot,
+                true
+        );
         return g;
     }
 }

@@ -37,6 +37,7 @@ public class BossEnemyBuilder implements EnemyBuilder {
     @Override public BossEnemyBuilder setLootTable(LootTable loot){ this.lootTable = loot; return this; }
     @Override public BossEnemyBuilder setAI(String aiBehavior){ this.aiBehavior = aiBehavior; return this; }
 
+    // extras
     public BossEnemyBuilder setCanFly(boolean canFly){ this.canFly = canFly; return this; }
     public BossEnemyBuilder setHasBreathAttack(boolean hasBreathAttack){ this.hasBreathAttack = hasBreathAttack; return this; }
     public BossEnemyBuilder setWingspan(int wingspan){ this.wingspan = wingspan; return this; }
@@ -47,7 +48,25 @@ public class BossEnemyBuilder implements EnemyBuilder {
         if (health <= 0) throw new IllegalStateException("Health must be positive");
 
         DragonBoss boss = new DragonBoss(this);
-        boss.isTemplate = true;
         return boss;
     }
+
+    public String getName() { return this.name; }
+    public int getHealth() { return this.health; }
+    public int getDamage() { return this.damage; }
+    public int getDefense() { return this.defense; }
+    public int getSpeed() { return this.speed; }
+    public String getElement() { return this.element; }
+
+    public List<Ability> getAbilities() { return new ArrayList<>(this.abilities); }
+
+    public Map<Integer,Integer> getPhases() { return new LinkedHashMap<>(this.phases); }
+
+    public LootTable getLootTable() { return this.lootTable; }
+
+    public String getAiBehavior() { return this.aiBehavior; }
+    public boolean isCanFly() { return this.canFly; }
+    public boolean isHasBreathAttack() { return this.hasBreathAttack; }
+    public int getWingspan() { return this.wingspan; }
+    public boolean isTemplate() { return this.isTemplate; }
 }

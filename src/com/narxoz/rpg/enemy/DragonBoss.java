@@ -1,11 +1,18 @@
 package com.narxoz.rpg.enemy;
 
+import com.narxoz.rpg.builder.BossEnemyBuilder;
 import com.narxoz.rpg.combat.Ability;
 import com.narxoz.rpg.loot.LootTable;
-import com.narxoz.rpg.builder.BossEnemyBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Complex boss enemy. Constructor that accepts BossEnemyBuilder is public
+ * so the builder (in another package) can instantiate DragonBoss.
+ */
 public class DragonBoss extends AbstractEnemy {
     private Map<Integer, Integer> phases = new LinkedHashMap<>();
     private String aiBehavior;
@@ -13,37 +20,78 @@ public class DragonBoss extends AbstractEnemy {
     private boolean hasBreathAttack;
     private int wingspan;
 
-    DragonBoss(BossEnemyBuilder b) {
-        // copy primitive fields
-        this.name = b.name;
-        this.health = b.health;
-        this.damage = b.damage;
-        this.defense = b.defense;
-        this.speed = b.speed;
-        this.element = b.element;
+    /**
+     * Public constructor used by BossEnemyBuilder.
+     * Performs defensive/deep copies of collections and components.
+     */
+    public DragonBoss(BossEnemyBuilder b) {
+        this.name = b.getName();
+        this.health = b.getHealth();
+        this.damage = b.getDamage();
+        this.defense = b.getDefense();
+        this.speed = b.getSpeed();
+        this.element = b.getElement();
+
         this.abilities = new ArrayList<>();
-        if (b.abilities != null) {
-            for (Ability a : b.abilities) {
+        List<Ability> bAbilities = b.getAbilities();
+        if (bAbilities != null) {
+            for (Ability a : bAbilities) {
                 this.abilities.add(a.clone());
             }
         }
-        this.phases = new LinkedHashMap<>(b.phases);
-        this.lootTable = (b.lootTable == null) ? null : b.lootTable.clone();
-        this.aiBehavior = b.aiBehavior;
-        this.canFly = b.canFly;
-        this.hasBreathAttack = b.hasBreathAttack;
-        this.wingspan = b.wingspan;
-        // mark template / builder default isTemplate true
-        this.isTemplate = b.isTemplate;
+
+        this.phases = new LinkedHashMap<>(b.getPhases());
+
+        LootTable lt = b.getLootTable();
+        this.lootTable = (lt == null) ? null : lt.clone();
+
+        this.aiBehavior = b.getAiBehavior();
+        this.canFly = b.isCanFly();
+        this.hasBreathAttack = b.isHasBreathAttack();
+        this.wingspan = b.getWingspan();
+
+        this.isTemplate = b.isTemplate();
+    }
+
+    /**
+     * Copy-constructor used by clone().
+     */
+    public DragonBoss(DragonBoss other) {
+        this.name = other.name;
+        this.health = other.health;
+        this.damage = other.damage;
+        this.defense = other.defense;
+        this.speed = other.speed;
+        this.element = other.element;
+
+        this.abilities = new ArrayList<>();
+        for (Ability a : other.abilities) this.abilities.add(a.clone());
+
+        this.phases = new LinkedHashMap<>(other.phases);
+
+        this.lootTable = (other.lootTable == null) ? null : other.lootTable.clone();
+
+        this.aiBehavior = other.aiBehavior;
+        this.canFly = other.canFly;
+        this.hasBreathAttack = other.hasBreathAttack;
+        this.wingspan = other.wingspan;
+
+        this.isTemplate = false;
     }
 
     @Deprecated
     public DragonBoss(String name, int health, int damage, int defense,
-                      int speed, String element, List<Ability> abilities,
+                      int speed, String element,
+                      List<Ability> abilities,
                       int phase1Threshold, int phase2Threshold, int phase3Threshold,
                       LootTable lootTable, String aiBehavior,
                       boolean canFly, boolean hasBreathAttack, int wingspan) {
-        this.name = name; this.health = health; this.damage = damage; this.defense = defense; this.speed = speed;
+
+        this.name = name;
+        this.health = health;
+        this.damage = damage;
+        this.defense = defense;
+        this.speed = speed;
         this.element = element;
         this.abilities = (abilities == null) ? new ArrayList<>() : new ArrayList<>(abilities);
         this.phases = new LinkedHashMap<>();
@@ -52,24 +100,15 @@ public class DragonBoss extends AbstractEnemy {
         this.phases.put(3, phase3Threshold);
         this.lootTable = (lootTable == null) ? null : lootTable;
         this.aiBehavior = aiBehavior;
-        this.canFly = canFly; this.hasBreathAttack = hasBreathAttack; this.wingspan = wingspan;
+        this.canFly = canFly;
+        this.hasBreathAttack = hasBreathAttack;
+        this.wingspan = wingspan;
+        this.isTemplate = true;
     }
 
     @Override
     public Enemy clone() {
-        DragonBoss copy = new DragonBoss(this.name, this.health, this.damage, this.defense,
-                this.speed, this.element, new ArrayList<>(),
-                0,0,0, // these are placeholders — we'll copy phases below
-                (this.lootTable == null) ? null : this.lootTable.clone(),
-                this.aiBehavior, this.canFly, this.hasBreathAttack, this.wingspan);
-
-        copy.abilities = new ArrayList<>();
-        for (Ability a : this.abilities) copy.abilities.add(a.clone());
-        copy.phases = new LinkedHashMap<>();
-        for (Map.Entry<Integer,Integer> e : this.phases.entrySet()) copy.phases.put(e.getKey(), e.getValue());
-        copy.lootTable = (this.lootTable == null) ? null : this.lootTable.clone();
-        copy.isTemplate = false; // clones are mutable
-        return copy;
+        return new DragonBoss(this);
     }
 
     public Map<Integer, Integer> getPhases() { return new LinkedHashMap<>(phases); }
@@ -84,7 +123,7 @@ public class DragonBoss extends AbstractEnemy {
         System.out.println("Health: " + health + " | Damage: " + damage + " | Defense: " + defense + " | Speed: " + speed);
         System.out.println("Element: " + (element == null ? "None" : element));
         System.out.println("Abilities (" + abilities.size() + "):");
-        for (com.narxoz.rpg.combat.Ability a : abilities) {
+        for (Ability a : abilities) {
             System.out.println("  - " + a.getName() + " [" + a.getType() + "] : " + a.getDescription() + " (DMG: " + a.getDamage() + ")");
         }
         System.out.println("Boss Phases:");

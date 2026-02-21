@@ -16,12 +16,18 @@ public abstract class AbstractEnemy implements Enemy {
     protected List<Ability> abilities = new ArrayList<>();
     protected LootTable lootTable;
 
-    // If true => template (immutable); clones set isTemplate = false
     protected boolean isTemplate = false;
 
     protected void checkMutable() {
         if (isTemplate) throw new IllegalStateException("Cannot modify template enemy. Clone it first.");
     }
+
+    /**
+     * Prototype contract: concrete subclasses must implement public clone()
+     * performing a DEEP COPY (clone abilities, clone lootTable, copy maps/lists).
+     */
+    @Override
+    public abstract Enemy clone();
 
     @Override public String getName() { return name; }
     @Override public int getHealth() { return health; }
