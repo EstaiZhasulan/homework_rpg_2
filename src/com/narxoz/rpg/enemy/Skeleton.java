@@ -1,31 +1,28 @@
 package com.narxoz.rpg.enemy;
 
 import com.narxoz.rpg.combat.Ability;
-import com.narxoz.rpg.loot.LootTable;
 import java.util.ArrayList;
-import java.util.List;
 
-public class Goblin extends AbstractEnemy {
+public class Skeleton extends AbstractEnemy {
 
-    public Goblin(String name) {
+    public Skeleton(String name) {
         this.name = name;
-        this.health = 100;
-        this.damage = 15;
-        this.defense = 5;
-        this.speed = 35;
+        this.health = 80;
+        this.damage = 20;
+        this.defense = 8;
+        this.speed = 25;
         this.abilities = new ArrayList<>();
-        this.lootTable = null;
     }
 
     @Override
     public Enemy clone() {
-        Goblin copy = new Goblin(this.name);
+        Skeleton copy = new Skeleton(this.name);
         copy.health = this.health;
         copy.damage = this.damage;
         copy.defense = this.defense;
         copy.speed = this.speed;
         copy.element = this.element;
-        copy.abilities = new ArrayList<>();
+        copy.abilities = new java.util.ArrayList<>();
         for (Ability a : this.abilities) copy.abilities.add(a.clone());
         copy.lootTable = (this.lootTable == null) ? null : this.lootTable.clone();
         copy.isTemplate = false;

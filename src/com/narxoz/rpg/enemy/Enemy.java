@@ -13,9 +13,12 @@ public interface Enemy {
     List<Ability> getAbilities();
     LootTable getLootTable();
     void displayInfo();
+
+    // Prototype pattern - must deep copy
     Enemy clone();
 
+    // Helpers for variants (allowed on clones)
     void multiplyStats(double multiplier);
+    void addAbility(com.narxoz.rpg.combat.Ability ability);
     void setElement(String element);
-    void addAbility(Ability ability);
 }
